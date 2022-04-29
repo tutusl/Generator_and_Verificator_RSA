@@ -3,20 +3,19 @@ import random
 
 
 class KeyGenerator:
-    def __init__(self, key_size=1024):
-        self.key_size = key_size
-
-    def generate_key(self):
+    def generate_asymmetric_key(self, key_size=1024):
         print('Generating p prime...')
-        p = self.__generate_large_prime()
+        p = self.__generate_large_prime(key_size)
         print('Generating q prime...')
-        q = self.__generate_large_prime()
+        q = p
+        while q != p:
+            q = self.__generate_large_prime(key_size)
         n = p * q
         phi = (p - 1) * (q - 1)
 
         print('Generating e that is relatively prime to (p-1)*(q-1)...')
         while True:
-            e = random.randrange(2 ** self.key_size, 2 ** (self.key_size+1))
+            e = random.randrange(2 ** key_size, 2 ** (key_size+1))
             if self.__gcd(e, phi) == 1:
                 break
 
@@ -40,10 +39,11 @@ class KeyGenerator:
 
         return u1 % m
 
-    def __generate_large_prime(self):
+    @staticmethod
+    def __generate_large_prime(key_size):
         miller_test = millerTest.MilerTest(accuracy=40)
         while True:
-            num = random.randrange(2**self.key_size, 2**(self.key_size+1))
+            num = random.randrange(2**key_size, 2**(key_size+1))
             if miller_test.is_prime(num):
                 return num
 
