@@ -1,5 +1,7 @@
-import millerTest
 import random
+import os
+from utils.RabinMiller import MilerTest as MT
+from utils.AesEncryption import AES
 
 
 class KeyGenerator:
@@ -41,7 +43,7 @@ class KeyGenerator:
 
     @staticmethod
     def __generate_large_prime(key_size):
-        miller_test = millerTest.MilerTest(accuracy=40)
+        miller_test = MT.MillerTest()
         while True:
             num = random.randrange(2**key_size, 2**(key_size+1))
             if miller_test.is_prime(num):
@@ -52,3 +54,15 @@ class KeyGenerator:
         while a != 0:
             a, b = b % a, a
         return b
+
+class CypherAndDecypher:
+    def __init__(self, aes_iv):
+        self.aes_key = os.urandom(16)
+        self.aes_iv = aes_iv
+        self.aes = AES(self.aes_key)
+    
+    def aes_encrypt(self, plain_text):
+        return self.aes.encrypt_ctr(plain_text, self.aes_iv)
+    
+    def aes_decrypt(self, cypher_text):
+        return self.aes.decrypt_ctr(cypher_text, self.aes_iv)
