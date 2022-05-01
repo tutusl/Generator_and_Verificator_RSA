@@ -31,18 +31,26 @@ def verify_signature(pub_key, digital_signature, original_hash):
 
 
 if __name__ == "__main__":
-    key_generator = cryptoUtils.KeyGenerator()
     crypto_object = cryptoUtils.CypherAndDecypher(aes_iv=os.urandom(16))
-    pub_key, pvt_key = key_generator.generate_asymmetric_key()
+    with open("public_key.txt","r") as f:
+        contents = f.readlines()
+        pub_key = (int(contents[0]), int(contents[1]))
+    with open("private_key.txt","r") as f:
+        contents = f.readlines()
+        pvt_key = (int(contents[0]), int(contents[1]))
     text_to_cypher = b'oi, eu sou legal'
 
+    import pdb; pdb.set_trace()
     cyphered_text = cypher_message(crypto_object, text_to_cypher)
     cyphered_key = chyper_key(crypto_object, pub_key)
     digital_signature, original_hash = make_signature(cyphered_text, pvt_key)
+    crypto_object.aes_key = cyphered_key
+
     import pdb;
     pdb.set_trace()
 
     decyphered_key = decypher_key(crypto_object, pvt_key)
+    crypto_object.aes_key = decyphered_key
     decyphered_text = decypher_message(crypto_object, cyphered_text)
     verified = verify_signature(pub_key, digital_signature, original_hash)
 
