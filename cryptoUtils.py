@@ -1,7 +1,8 @@
 import random
 import os
-from utils.RabinMiller import MilerTest as MT
+from utils.RabinMiller import MillerTest as MT
 from utils.AesEncryption import AES
+from utils.RSA import RsaOaep
 
 
 class KeyGenerator:
@@ -9,23 +10,22 @@ class KeyGenerator:
         print('Generating p prime...')
         p = self.__generate_large_prime(key_size)
         print('Generating q prime...')
-        q = p
-        while q != p:
-            q = self.__generate_large_prime(key_size)
+        q = self.__generate_large_prime(key_size)
+        assert p != q
         n = p * q
         phi = (p - 1) * (q - 1)
 
         print('Generating e that is relatively prime to (p-1)*(q-1)...')
         while True:
-            e = random.randrange(2 ** key_size, 2 ** (key_size+1))
+            e = random.randrange(1, phi)
             if self.__gcd(e, phi) == 1:
                 break
 
         print('Calculating d that is mod inverse of e...')
         d = self.__find_mod_inverse(e, phi)
 
-        public_key = (n, e)
-        private_key = (n, d)
+        public_key = (e, n)
+        private_key = (d, n)
 
         return public_key, private_key
 
@@ -43,9 +43,9 @@ class KeyGenerator:
 
     @staticmethod
     def __generate_large_prime(key_size):
-        miller_test = MT.MillerTest()
+        miller_test = MT()
         while True:
-            num = random.randrange(2**key_size, 2**(key_size+1))
+            num = random.randrange(2**(key_size-1), 2**key_size)
             if miller_test.is_prime(num):
                 return num
 
@@ -60,9 +60,19 @@ class CypherAndDecypher:
         self.aes_key = os.urandom(16)
         self.aes_iv = aes_iv
         self.aes = AES(self.aes_key)
+        self.rsa = RsaOaep()
     
     def aes_encrypt(self, plain_text):
         return self.aes.encrypt_ctr(plain_text, self.aes_iv)
     
     def aes_decrypt(self, cypher_text):
         return self.aes.decrypt_ctr(cypher_text, self.aes_iv)
+
+    def rsa_oaep_encrypt(self, message, public_key):
+        return self.rsa.encrypt_oaep(message, public_key)
+    
+    def rsa_oaep_decrypt(self, cypher, private_key):
+        return self.rsa.decrypt_oaep(cypher, private_key)
+
+    def get_aes_key(self):
+        return self.aes_key

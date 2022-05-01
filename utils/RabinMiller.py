@@ -1,7 +1,7 @@
 import random
 
 
-class MilerTest:
+class MillerTest:
     def __init__(self, accuracy=40):
         self.k = accuracy
 
