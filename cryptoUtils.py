@@ -17,7 +17,8 @@ class KeyGenerator:
 
         print('Generating e that is relatively prime to (p-1)*(q-1)...')
         while True:
-            e = random.randrange(1, phi)
+            # generating small e
+            e = random.randrange(2, phi-1)
             if self.__gcd(e, phi) == 1:
                 break
 

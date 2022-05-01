@@ -91,8 +91,10 @@ class RsaOaep:
 
     @staticmethod
     def i2osp(x, xlen):
-        '''Converts a nonnegative integer to an octet string of a specified length'''
-        return x.to_bytes(xlen, byteorder='big')
+        try:
+            return x.to_bytes(xlen, byteorder='big')
+        except:
+            import pdb; pdb.set_trace()
 
     @staticmethod
     def sha1(m):
