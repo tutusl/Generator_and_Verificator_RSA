@@ -1,6 +1,7 @@
 import os
 import cryptoUtils
 from hashlib import sha512
+from generateKeys import generate_keys
 import base64
 
 
@@ -32,6 +33,8 @@ def verify_signature(pub_key, digital_signature, original_hash):
 
 
 if __name__ == "__main__":
+    '''Setting up the variables'''
+    generate_keys()
     crypto_object = cryptoUtils.CypherAndDecypher(aes_iv=os.urandom(16))
     with open("public_key.txt","r") as f:
         contents = f.readlines()
@@ -41,12 +44,36 @@ if __name__ == "__main__":
         pvt_key = (int(contents[0]), int(contents[1]))
     text_to_cypher = b"It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
 
+    print('text to cypher: ' + str(text_to_cypher))
+    print()
+
+    '''Cyphering message, key and signature'''
+
     cyphered_text = cypher_message(crypto_object, text_to_cypher)
     cyphered_key = chyper_key(crypto_object, pub_key)
     digital_signature, original_hash = make_signature(cyphered_text, pvt_key)
     crypto_object.aes_key = cyphered_key
 
+    print('cyphered_key:' + str(cyphered_key))
+    print()
+    print('cyphered_text: ' + str(cyphered_text))
+    print()
+    print('digital_signature: ' + str(digital_signature))
+    print()
+
+    '''Decyphering message, key and signature'''
+
     decyphered_key = decypher_key(crypto_object, pvt_key)
     crypto_object.aes_key = decyphered_key
     decyphered_text = decypher_message(crypto_object, cyphered_text)
     verified = verify_signature(pub_key, digital_signature, original_hash)
+
+    print('decyphered_key:' + str(decyphered_key))
+    print()
+    print('decyphered_text: ' + str(decyphered_text))
+    print()
+
+    if verified:
+        print('message was verified successfully!')
+    else:
+        print("message couldn't be verified!")
