@@ -46,13 +46,7 @@ if __name__ == "__main__":
     digital_signature, original_hash = make_signature(cyphered_text, pvt_key)
     crypto_object.aes_key = cyphered_key
 
-    import pdb; pdb.set_trace()
-
     decyphered_key = decypher_key(crypto_object, pvt_key)
     crypto_object.aes_key = decyphered_key
     decyphered_text = decypher_message(crypto_object, cyphered_text)
     verified = verify_signature(pub_key, digital_signature, original_hash)
-
-    import pdb; pdb.set_trace()
-    
-
