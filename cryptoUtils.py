@@ -56,6 +56,7 @@ class KeyGenerator:
             a, b = b % a, a
         return b
 
+
 class CypherAndDecypher:
     def __init__(self, aes_iv):
         self.aes_key = os.urandom(16)
