@@ -2,6 +2,7 @@ from math import ceil
 import os
 import hashlib
 
+
 class RsaOaep:
     def encrypt_oaep(self, m, public_key):
         '''Encrypt a byte array with OAEP padding'''
