@@ -78,3 +78,5 @@ if __name__ == "__main__":
         print('message was verified successfully!')
     else:
         print("message couldn't be verified!")
+
+    input('aperte qualquer tecla para sair.')
